@@ -16,6 +16,13 @@
   )
   (begin
 
+;; TODO: try using a string buffer instead of read-char. changes:
+;; - call read-line and store buffer, instead of read-char
+;; - want a fast string-ref, maybe an unsafe version???
+;; - ptable's buf needs to be more than a char now, probably
+;;   a string and an index
+;; - none of this matters if it isn't faster than before
+
 (define read cyc-read)
 
 ;; Extended information for each input port
