@@ -474,6 +474,7 @@
 
 ;; Read an escaped character within a string
 ;; The escape '\' has already been read at this point
+;; FIXME: R7RS p.45f this lacks \x55; and \ (end of line) notation
 (define (read-str-esc fp buf ptbl)
   (let ((c (read-char fp)))
     (cond
@@ -482,10 +483,19 @@
          (in-port:get-lnum ptbl)
          (in-port:get-cnum ptbl)))
       ((or (equal? #\" c)
-           (equal? #\\ c))
+           (equal? #\\ c)
+	   (equal? #\| c))
        (cons c buf))
       ((equal? #\n c)
        (cons #\newline buf))
+      ((equal? #\t c)
+       (cons #\tab buf))
+      ((equal? #\a c)
+       (cons #\alarm buf))
+      ((equal? #\b c)
+       (cons #\x8 buf))
+      ((equal? #\r c)
+       (cons #\xd buf))
       (else
         (parse-error (string-append 
                        "invalid escape character [" 
