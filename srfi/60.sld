@@ -1,6 +1,8 @@
 ;; srfi 60 - binary operations on numbers
 ;; Copyright 2016 (c) Mark Meyer (mark@ofosos.org)
 
+;; various stuff adapted from "Hacker's Delight" by Henry S. Warren, Jr. 2002.
+
 (define-library (srfi-60)
   (export
    logand
@@ -55,5 +57,16 @@
     (define-c p_lognot
       "(void *data, int argc, closure _, object k, object x)"
       " int ret = ~(int)obj_obj2int(x);
-        return_closcall1(data, k, obj_int2obj(ret)); ")))
+        return_closcall1(data, k, obj_int2obj(ret)); ")
+
+    ;; chapter 5, p.65
+    (define-c (p_popcnt arg)
+      "(void *data, int argc, closure _, object k, object x)"
+      " int ret = obj_obj2int(x);
+        ret = (ret & 0x55555555) + ((ret >> 1) & 0x55555555);
+        ret = (ret & 0x33333333) + ((ret >> 2) & 0x33333333);
+        ret = (ret & 0x0f0f0f0f) + ((ret >> 4) & 0x0f0f0f0f);
+        ret = (ret & 0x00ff00ff) + ((ret >> 8) & 0x00ff00ff);
+        ret = (ret & 0x0000ffff) + ((ret >>16) & 0x0000ffff);
+        return_closcall1(data, k, obj_int2obj(ret));")))
 
